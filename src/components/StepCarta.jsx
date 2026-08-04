@@ -198,7 +198,7 @@ function CartaNormal({ datosPersonales, especiales, materiaGrupos, setMateriaGru
                   value={materiaGrupos[m.code] ?? ''}
                   onChange={(e) => setMateriaGrupo(m.code, e.target.value)}
                 >
-                  <option value="">-</option>
+                  <option value=""></option>
                   {GRUPOS.map((g) => (
                     <option key={g} value={g}>
                       {g}

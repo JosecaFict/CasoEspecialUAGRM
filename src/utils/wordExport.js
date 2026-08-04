@@ -129,7 +129,7 @@ function tableCellText(text, opts = {}, width = null) {
 // firma — el ancho sobrante se lo lleva MATERIA, que suele tener nombres largos.
 function buildMateriasTable(especiales, materiaGrupos, requiereFirmaDocente) {
   const widths = requiereFirmaDocente
-    ? { sigla: 15, materia: 55, grupo: 10, firma: 20 }
+    ? { sigla: 15, materia: 47, grupo: 10, firma: 28 }
     : { sigla: 15, materia: 75, grupo: 10 }
 
   const headerCells = [
