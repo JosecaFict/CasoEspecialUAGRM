@@ -34,6 +34,7 @@ const ESTADO_LABEL = {
 export default function StepMalla({ onNext, onBack }) {
   const { datosPersonales, materiaEstados, setMateriaEstado, resetMalla } = useApp()
   const [brush, setBrush] = useState('aprobada')
+  const [editable, setEditable] = useState(false)
   const maxAdelanto = maxAdelantoPorPPA(datosPersonales.ppa)
 
   const especialCount = useMemo(
@@ -211,9 +212,21 @@ export default function StepMalla({ onNext, onBack }) {
         <button type="button" className="brush-btn brush-reset" onClick={handleResetMalla}>
           ↺ Reiniciar malla
         </button>
+        <button
+          type="button"
+          className="brush-btn no-print"
+          onClick={() => setEditable((v) => !v)}
+        >
+          {editable ? '✕ Cerrar editor de flechas' : '✎ Editar flechas'}
+        </button>
       </div>
 
-      <MallaSheets materiaEstados={materiaEstados} evaluate={evaluateCard} onCardClick={handleCardClick} />
+      <MallaSheets
+        materiaEstados={materiaEstados}
+        evaluate={evaluateCard}
+        onCardClick={handleCardClick}
+        editable={editable}
+      />
 
       <div className="especial-summary">
         <div className="especial-summary-stat">
