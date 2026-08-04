@@ -11,6 +11,7 @@ import {
   WidthType,
   BorderStyle,
   VerticalAlign,
+  UnderlineType,
   convertInchesToTwip,
   convertMillimetersToTwip,
 } from 'docx'
@@ -106,10 +107,16 @@ function buildDestinatario(directorTexto) {
 }
 
 function buildRef(texto) {
-  return paragraph([run('Ref.: ', { bold: true }), run(texto)], {
-    alignment: AlignmentType.CENTER,
-    spacing: { before: 480, line: 480 },
-  })
+  return paragraph(
+    [
+      run('Ref.: ', { bold: true }),
+      run(texto.toUpperCase(), { bold: true, underline: { type: UnderlineType.SINGLE } }),
+    ],
+    {
+      alignment: AlignmentType.CENTER,
+      spacing: { before: 480, line: 480 },
+    }
+  )
 }
 
 function buildBodyParagraph(children) {

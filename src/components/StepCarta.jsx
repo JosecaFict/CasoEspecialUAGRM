@@ -169,7 +169,7 @@ function CartaNormal({ datosPersonales, especiales, materiaGrupos, setMateriaGru
       </p>
 
       <p className="carta-ref">
-        <strong>Ref.:</strong> Solicitud de Adición de Materias como caso Especial.
+        <strong>Ref.:</strong> <strong><u>SOLICITUD DE ADICIÓN DE MATERIAS COMO CASO ESPECIAL.</u></strong>
       </p>
 
       <p className="carta-parrafo">
@@ -263,8 +263,13 @@ function CartaOcho({ datosPersonales, nombreCompleto, fecha }) {
       </p>
 
       <p className="carta-ref">
-        <strong>Ref.:</strong> Solicitud de autorización para cursar ocho (8) materias en el semestre{' '}
-        {datosPersonales.semestre || '_'}/{datosPersonales.anio || '202_'}
+        <strong>Ref.:</strong>{' '}
+        <strong>
+          <u>
+            SOLICITUD DE AUTORIZACIÓN PARA CURSAR OCHO (8) MATERIAS EN EL SEMESTRE{' '}
+            {datosPersonales.semestre || '_'}/{datosPersonales.anio || '202_'}
+          </u>
+        </strong>
       </p>
 
       <p>De mi mayor consideración:</p>
