@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { useApp } from './context/AppContext'
 import StepDatosPersonales from './components/StepDatosPersonales'
 import StepMalla from './components/StepMalla'
@@ -11,6 +12,10 @@ const STEPS = [
 
 export default function App() {
   const { step, setStep } = useApp()
+
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [step])
 
   return (
     <div className="app-shell">
