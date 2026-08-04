@@ -233,6 +233,17 @@ export default function PrereqArrows({ containerRef, cardRefs, edges, bus }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  // En la build de producción (fuera de StrictMode, que en dev duplica el primer
+  // render y de paso "corrige gratis" cualquier medición tomada antes de que el
+  // layout termine de asentarse) el cálculo inicial puede correr un frame antes de
+  // que el navegador estabilice el layout definitivo. Se fuerza una segunda pasada
+  // después del primer pintado — igual que ya corrige un resize manual — para no
+  // depender de esa casualidad de StrictMode.
+  useLayoutEffect(() => {
+    const raf = requestAnimationFrame(() => forceRecalc((t) => t + 1))
+    return () => cancelAnimationFrame(raf)
+  }, [])
+
   return (
     <svg ref={svgRef} className="prereq-arrows">
       <defs>
