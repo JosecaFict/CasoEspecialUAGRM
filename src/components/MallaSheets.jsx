@@ -22,26 +22,21 @@ const STRAIGHT_EDGES = new Set([
   'VET108-VET111',
 ])
 
-// Los 5 campos que trazan una línea "avoid" de punta a punta, en el orden en que
-// se recorren: salida, altura del primer tramo, tramo vertical, altura del segundo
-// tramo, llegada. Se usa para las líneas que se están afinando en una tanda.
-const FIVE_STEP_FIELDS = ['startOffset', 'laneOffset', 'gapOffset', 'endLaneOffset', 'endOffset']
-
 // Líneas que ya están casi listas: solo se muestran los campos que todavía hacen
 // falta tocar, el resto queda oculto (aunque el valor guardado se sigue aplicando).
-const PARTIAL_EDGES = {
-  'VET108-VET113': FIVE_STEP_FIELDS,
-  'ZOT108-ZOT111': FIVE_STEP_FIELDS,
-  'ZOT108-ZOT114': FIVE_STEP_FIELDS,
-  'ZOT108-ZOT115': FIVE_STEP_FIELDS,
-  'ZOT108-ZOT113': FIVE_STEP_FIELDS,
-  'ZOT108-ZOT112': FIVE_STEP_FIELDS,
-  'SAP106-SAP108': FIVE_STEP_FIELDS,
-}
+const PARTIAL_EDGES = {}
 
 // Líneas ya afinadas y confirmadas — se dejan de mostrar en el editor (sus ajustes
 // guardados se siguen aplicando igual, solo que ya no aparecen para tocarlas por error).
-const LOCKED_EDGES = new Set([])
+const LOCKED_EDGES = new Set([
+  'ZOT108-ZOT115',
+  'ZOT108-ZOT113',
+  'ZOT108-ZOT112',
+  'ZOT108-ZOT114',
+  'ZOT108-ZOT111',
+  'SAP106-SAP108',
+  'VET108-VET113',
+])
 
 // Las 5 materias del 9° semestre abren las 3 modalidades de graduación (15 líneas).
 // Dibujarlas todas por separado se ve como un enredo — se muestran como un solo
@@ -53,13 +48,34 @@ const GRADUACION_TARGETS = ['SAP109', 'VET123', 'ZOT223']
 // dos materias puntuales de la fila que atraviesan (nunca sobre una card), y cada
 // una tiene su propio color para poder distinguirlas cuando salen del mismo hub.
 const AVOID_EDGES = {
-  'ZOT108-ZOT115': { through: ['SAP106', 'ZOT109'], color: '#2563eb' },
-  'ZOT108-ZOT113': { through: ['ZOT110', 'SAP105'], color: '#7c3aed' },
-  'ZOT108-ZOT112': { through: ['SAP105', 'SAP106'], color: '#0891b2' },
-  'ZOT108-ZOT114': { through: ['ZOT109', 'VET116'], color: '#ea580c' },
-  'ZOT108-ZOT111': { offset: 0, color: '#be185d' },
-  'SAP106-SAP108': { through: ['ZOT115', 'ZOT113'], color: '#92400e' },
-  'VET108-VET113': { through: ['ZOT106', 'VET111'], color: '#0f766e' },
+  'ZOT108-ZOT115': { through: ['SAP106', 'ZOT109'], color: '#2563eb', endLaneOffset: 5 },
+  'ZOT108-ZOT113': {
+    through: ['ZOT110', 'SAP105'],
+    color: '#7c3aed',
+    startOffset: -6,
+    laneOffset: -2,
+    endLaneOffset: 17,
+    endOffset: 15,
+  },
+  'ZOT108-ZOT112': {
+    through: ['SAP105', 'SAP106'],
+    color: '#0891b2',
+    startOffset: -7,
+    laneOffset: -4,
+    endLaneOffset: 16,
+    endOffset: 14,
+  },
+  'ZOT108-ZOT114': { through: ['ZOT109', 'VET116'], color: '#ea580c', laneOffset: -4, endLaneOffset: 7 },
+  'ZOT108-ZOT111': {
+    offset: 0,
+    color: '#be185d',
+    laneOffset: -20,
+    gapOffset: -16,
+    endLaneOffset: 6,
+    endOffset: 42,
+  },
+  'SAP106-SAP108': { through: ['ZOT115', 'ZOT113'], color: '#92400e', gapOffset: -2, endLaneOffset: 8 },
+  'VET108-VET113': { through: ['ZOT106', 'VET111'], color: '#0f766e', endLaneOffset: 6 },
 }
 
 // Ajustes manuales que el usuario puede hacer en vivo desde el "Editor de flechas"
