@@ -22,22 +22,26 @@ const STRAIGHT_EDGES = new Set([
   'VET108-VET111',
 ])
 
-// Líneas que ya están casi listas: solo se muestran los 1-2 campos que todavía hacen
+// Los 5 campos que trazan una línea "avoid" de punta a punta, en el orden en que
+// se recorren: salida, altura del primer tramo, tramo vertical, altura del segundo
+// tramo, llegada. Se usa para las líneas que se están afinando en una tanda.
+const FIVE_STEP_FIELDS = ['startOffset', 'laneOffset', 'gapOffset', 'endLaneOffset', 'endOffset']
+
+// Líneas que ya están casi listas: solo se muestran los campos que todavía hacen
 // falta tocar, el resto queda oculto (aunque el valor guardado se sigue aplicando).
 const PARTIAL_EDGES = {
-  'ZOT108-ZOT112': ['startOffset', 'laneOffset'],
-  'SAP106-SAP108': ['endLaneOffset'],
+  'VET108-VET113': FIVE_STEP_FIELDS,
+  'ZOT108-ZOT111': FIVE_STEP_FIELDS,
+  'ZOT108-ZOT114': FIVE_STEP_FIELDS,
+  'ZOT108-ZOT115': FIVE_STEP_FIELDS,
+  'ZOT108-ZOT113': FIVE_STEP_FIELDS,
+  'ZOT108-ZOT112': FIVE_STEP_FIELDS,
+  'SAP106-SAP108': FIVE_STEP_FIELDS,
 }
 
 // Líneas ya afinadas y confirmadas — se dejan de mostrar en el editor (sus ajustes
 // guardados se siguen aplicando igual, solo que ya no aparecen para tocarlas por error).
-const LOCKED_EDGES = new Set([
-  'ZOT108-ZOT111',
-  'ZOT108-ZOT114',
-  'VET108-VET113',
-  'ZOT108-ZOT115',
-  'ZOT108-ZOT113',
-])
+const LOCKED_EDGES = new Set([])
 
 // Las 5 materias del 9° semestre abren las 3 modalidades de graduación (15 líneas).
 // Dibujarlas todas por separado se ve como un enredo — se muestran como un solo
@@ -198,10 +202,12 @@ export default function MallaSheets({ materiaEstados, evaluate, onCardClick, edi
               const [from, to] = key.split('-')
               const onlyFields = PARTIAL_EDGES[key] || null
               const showField = (f) => !onlyFields || onlyFields.includes(f)
+              const LR_FIELDS = new Set(['startOffset', 'gapOffset', 'endOffset'])
               const fieldLabel = (f, normal) => {
-                if (onlyFields && f === 'startOffset') return '1. Izquierda / Derecha'
-                if (onlyFields && f === 'laneOffset') return '2. Arriba / Abajo'
-                return normal
+                if (!onlyFields) return normal
+                const step = onlyFields.indexOf(f)
+                if (step === -1) return normal
+                return `${step + 1}. ${LR_FIELDS.has(f) ? 'Izquierda / Derecha' : 'Arriba / Abajo'}`
               }
               return (
                 <div key={key} className="arrow-lab-row">
@@ -220,6 +226,17 @@ export default function MallaSheets({ materiaEstados, evaluate, onCardClick, edi
                       />
                     </label>
                   )}
+                  {showField('startOffset') && (
+                    <label className="arrow-lab-field">
+                      {fieldLabel('startOffset', 'Salida')}
+                      <input
+                        type="number"
+                        step="1"
+                        value={merged.startOffset ?? 0}
+                        onChange={(e) => updateOverride(key, { startOffset: Number(e.target.value) })}
+                      />
+                    </label>
+                  )}
                   {showField('laneOffset') && (
                     <label className="arrow-lab-field">
                       {fieldLabel('laneOffset', 'Altura salida')}
@@ -231,25 +248,25 @@ export default function MallaSheets({ materiaEstados, evaluate, onCardClick, edi
                       />
                     </label>
                   )}
-                  {showField('endLaneOffset') && (
-                    <label className="arrow-lab-field">
-                      Altura llegada
-                      <input
-                        type="number"
-                        step="1"
-                        value={merged.endLaneOffset ?? 0}
-                        onChange={(e) => updateOverride(key, { endLaneOffset: Number(e.target.value) })}
-                      />
-                    </label>
-                  )}
                   {showField('gapOffset') && (
                     <label className="arrow-lab-field">
-                      Izquierda / Derecha
+                      {fieldLabel('gapOffset', 'Izquierda / Derecha')}
                       <input
                         type="number"
                         step="1"
                         value={merged.gapOffset ?? 0}
                         onChange={(e) => updateOverride(key, { gapOffset: Number(e.target.value) })}
+                      />
+                    </label>
+                  )}
+                  {showField('endLaneOffset') && (
+                    <label className="arrow-lab-field">
+                      {fieldLabel('endLaneOffset', 'Altura llegada')}
+                      <input
+                        type="number"
+                        step="1"
+                        value={merged.endLaneOffset ?? 0}
+                        onChange={(e) => updateOverride(key, { endLaneOffset: Number(e.target.value) })}
                       />
                     </label>
                   )}
@@ -264,20 +281,9 @@ export default function MallaSheets({ materiaEstados, evaluate, onCardClick, edi
                       />
                     </label>
                   )}
-                  {showField('startOffset') && (
-                    <label className="arrow-lab-field">
-                      {fieldLabel('startOffset', 'Salida')}
-                      <input
-                        type="number"
-                        step="1"
-                        value={merged.startOffset ?? 0}
-                        onChange={(e) => updateOverride(key, { startOffset: Number(e.target.value) })}
-                      />
-                    </label>
-                  )}
                   {showField('endOffset') && (
                     <label className="arrow-lab-field">
-                      Llegada
+                      {fieldLabel('endOffset', 'Llegada')}
                       <input
                         type="number"
                         step="1"
