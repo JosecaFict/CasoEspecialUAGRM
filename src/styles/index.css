@@ -935,7 +935,11 @@ body {
 }
 
 .carta-tabla .col-grupo {
-  width: 56px;
+  width: 72px;
+}
+
+.carta-tabla .col-grupo select.tabla-input {
+  padding: 6px 4px;
 }
 
 .carta-tabla .col-firma {
