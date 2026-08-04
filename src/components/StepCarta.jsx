@@ -234,6 +234,8 @@ function CartaNormal({ datosPersonales, especiales, materiaGrupos, setMateriaGru
         <br />
         <strong>Registro:</strong> {datosPersonales.registro || '_________________________'}
         <br />
+        <strong>PPA:</strong> {datosPersonales.ppa || '_________________________'}
+        <br />
         <strong>Celular:</strong> {datosPersonales.celular || '_________________________'}
       </p>
     </article>

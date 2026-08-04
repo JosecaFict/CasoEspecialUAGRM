@@ -204,6 +204,7 @@ function buildCartaNormalSection(logoBuffer, { datosPersonales, especiales, mate
     ...buildFirmaBlock([
       { label: 'Nombre y apellido: ', value: nombreCompleto || '_________________________' },
       { label: 'Registro: ', value: datosPersonales.registro || '_________________________' },
+      { label: 'PPA: ', value: datosPersonales.ppa || '_________________________' },
       { label: 'Celular: ', value: datosPersonales.celular || '_________________________' },
     ]),
   ]
