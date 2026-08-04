@@ -5,7 +5,7 @@ import { formatFechaLarga } from '../utils/date'
 import MallaSheets from './MallaSheets'
 
 export default function StepCarta({ onBack }) {
-  const { datosPersonales, materiaEstados, materiaGrupos, setMateriaGrupo, resetAll } = useApp()
+  const { datosPersonales, materiaEstados, materiaGrupos, setMateriaGrupo, setStep } = useApp()
   const [descargandoWord, setDescargandoWord] = useState(false)
   const mallaRef = useRef(null)
 
@@ -136,8 +136,8 @@ export default function StepCarta({ onBack }) {
             {descargandoWord ? 'Generando Word...' : 'Descargar Word'}
           </button>
         )}
-        <button type="button" className="btn-danger" onClick={resetAll}>
-          Empezar de nuevo
+        <button type="button" className="btn-secondary" onClick={() => setStep(1)}>
+          Volver al inicio
         </button>
       </div>
     </div>
@@ -181,7 +181,7 @@ function CartaNormal({ datosPersonales, especiales, materiaGrupos, setMateriaGru
           <tr>
             <th>SIGLA</th>
             <th>MATERIA</th>
-            <th>GRUPO</th>
+            <th className="col-grupo">GRUPO</th>
             {requiereFirmaDocente && <th>FIRMA DOCENTE</th>}
           </tr>
         </thead>
@@ -190,7 +190,7 @@ function CartaNormal({ datosPersonales, especiales, materiaGrupos, setMateriaGru
             <tr key={m.code}>
               <td>{m.code}</td>
               <td>{m.name}</td>
-              <td className="no-print-border">
+              <td className="no-print-border col-grupo">
                 <input
                   type="text"
                   className="tabla-input no-print-input"

@@ -930,6 +930,10 @@ body {
   font-size: 0.85rem;
 }
 
+.carta-tabla .col-grupo {
+  width: 56px;
+}
+
 .print-only-value {
   display: none;
 }

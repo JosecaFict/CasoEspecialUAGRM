@@ -7,8 +7,14 @@ const CURRENT_YEAR = new Date().getFullYear()
 const ANIOS = Array.from({ length: 6 }, (_, i) => Math.max(2026, CURRENT_YEAR) + i)
 
 export default function StepDatosPersonales({ onNext }) {
-  const { datosPersonales, setDatosPersonales } = useApp()
+  const { datosPersonales, setDatosPersonales, resetAll } = useApp()
   const [touched, setTouched] = useState({})
+
+  function handleNuevaSolicitud() {
+    if (window.confirm('¿Borrar todos los datos cargados y empezar una solicitud nueva? Esta acción no se puede deshacer.')) {
+      resetAll()
+    }
+  }
 
   const errors = useMemo(() => {
     const e = {}
@@ -202,6 +208,9 @@ export default function StepDatosPersonales({ onNext }) {
       <div className="actions">
         <button type="submit" className="btn-primary">
           Siguiente: Malla curricular
+        </button>
+        <button type="button" className="btn-danger" onClick={handleNuevaSolicitud}>
+          Nueva Solicitud
         </button>
       </div>
     </form>
