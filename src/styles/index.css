@@ -930,8 +930,16 @@ body {
   font-size: 0.85rem;
 }
 
+.carta-tabla .col-sigla {
+  width: 72px;
+}
+
 .carta-tabla .col-grupo {
   width: 56px;
+}
+
+.carta-tabla .col-firma {
+  width: 100px;
 }
 
 .print-only-value {

@@ -4,6 +4,8 @@ import { MATERIA_INDEX, DIRECTORA, FACULTAD, CARRERA } from '../data/malla'
 import { formatFechaLarga } from '../utils/date'
 import MallaSheets from './MallaSheets'
 
+const GRUPOS = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'AB', 'CD', 'X', 'Z']
+
 export default function StepCarta({ onBack }) {
   const { datosPersonales, materiaEstados, materiaGrupos, setMateriaGrupo, setStep } = useApp()
   const [descargandoWord, setDescargandoWord] = useState(false)
@@ -179,36 +181,42 @@ function CartaNormal({ datosPersonales, especiales, materiaGrupos, setMateriaGru
       <table className="carta-tabla">
         <thead>
           <tr>
-            <th>SIGLA</th>
+            <th className="col-sigla">SIGLA</th>
             <th>MATERIA</th>
             <th className="col-grupo">GRUPO</th>
-            {requiereFirmaDocente && <th>FIRMA DOCENTE</th>}
+            {requiereFirmaDocente && <th className="col-firma">FIRMA DOCENTE</th>}
           </tr>
         </thead>
         <tbody>
           {especiales.map((m) => (
             <tr key={m.code}>
-              <td>{m.code}</td>
+              <td className="col-sigla">{m.code}</td>
               <td>{m.name}</td>
               <td className="no-print-border col-grupo">
-                <input
-                  type="text"
+                <select
                   className="tabla-input no-print-input"
                   value={materiaGrupos[m.code] ?? ''}
-                  onChange={(e) => setMateriaGrupo(m.code, e.target.value.toUpperCase())}
-                  placeholder="Grupo"
-                />
+                  onChange={(e) => setMateriaGrupo(m.code, e.target.value)}
+                >
+                  <option value="">-</option>
+                  {GRUPOS.map((g) => (
+                    <option key={g} value={g}>
+                      {g}
+                    </option>
+                  ))}
+                </select>
                 <span className="print-only-value">{materiaGrupos[m.code] ?? ''}</span>
               </td>
-              {requiereFirmaDocente && <td></td>}
+              {requiereFirmaDocente && <td className="col-firma"></td>}
             </tr>
           ))}
         </tbody>
       </table>
 
+      <p className="carta-parrafo">Para respaldar la presente solicitud, adjunto la siguiente documentación:</p>
       <ul className="carta-adjuntos">
-        <li>Adjunto boleta de inscripción, y,</li>
-        <li>Boleta de pago de adicción (caja) 10 Bs.</li>
+        <li>Boleta de inscripción.</li>
+        <li>Boleta de pago por concepto de adición de materias (Bs. 10).</li>
       </ul>
 
       <p className="carta-parrafo">
@@ -268,19 +276,26 @@ function CartaOcho({ datosPersonales, nombreCompleto, fecha }) {
       </p>
 
       <p className="carta-parrafo">
-        La presente solicitud obedece a mi interés de avanzar en mi formación académica y optimizar mi rendimiento
-        durante el presente periodo, comprometiéndome a asumir con responsabilidad la carga académica y cumplir con
-        todas las obligaciones que demandan las asignaturas.
+        La presente solicitud tiene como finalidad avanzar en mi formación académica y optimizar mi rendimiento
+        durante el presente periodo, asumiendo el compromiso de cumplir responsablemente con la carga académica y
+        con todas las obligaciones que demandan las asignaturas.
       </p>
 
       <p className="carta-parrafo">
-        Por lo expuesto, solicito muy respetuosamente que mi petición sea considerada y, de ser posible, se
-        autorice la inscripción de las ocho materias para el presente semestre.
+        Por lo expuesto, solicito muy respetuosamente que mi petición sea considerada y, de ser procedente, se
+        autorice cursar las ocho (8) materias durante el presente semestre.
       </p>
 
+      <p className="carta-parrafo">Adjunto a la presente la siguiente documentación de respaldo:</p>
+      <ul className="carta-adjuntos">
+        <li>Boleta de inscripción.</li>
+        <li>Avance académico.</li>
+        <li>Histórico académico.</li>
+      </ul>
+
       <p className="carta-parrafo">
-        Sin otro particular, agradezco de antemano la atención brindada a la presente y quedo a la espera de una
-        respuesta favorable.
+        Sin otro particular y esperando una respuesta favorable a mi solicitud, me despido de su autoridad
+        reiterándole las seguridades de mi más alta consideración y respeto.
       </p>
 
       <p>Atentamente,</p>
@@ -291,8 +306,6 @@ function CartaOcho({ datosPersonales, nombreCompleto, fecha }) {
         <strong>Registro Universitario:</strong> {datosPersonales.registro || '_________________________'}
         <br />
         <strong>Número de celular:</strong> {datosPersonales.celular || '_________________________'}
-        <br />
-        Adjunto boleta de inscripción, avance académico e histórico:
       </p>
     </article>
   )

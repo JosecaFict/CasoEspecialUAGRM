@@ -116,30 +116,38 @@ function buildBodyParagraph(children) {
   return paragraph(children, { indent: INDENT_FIRST_LINE })
 }
 
-function tableCellText(text, opts = {}) {
+function tableCellText(text, opts = {}, width = null) {
   return new TableCell({
     verticalAlign: VerticalAlign.CENTER,
     margins: { top: 60, bottom: 60, left: 80, right: 80 },
+    ...(width ? { width: { size: width, type: WidthType.PERCENTAGE } } : {}),
     children: [new Paragraph({ children: [run(text, opts)], alignment: AlignmentType.CENTER })],
   })
 }
 
+// SIGLA y GRUPO son códigos cortos, y FIRMA DOCENTE solo necesita espacio para una
+// firma — el ancho sobrante se lo lleva MATERIA, que suele tener nombres largos.
 function buildMateriasTable(especiales, materiaGrupos, requiereFirmaDocente) {
-  const headerCells = ['SIGLA', 'MATERIA', 'GRUPO']
-  if (requiereFirmaDocente) headerCells.push('FIRMA DOCENTE')
+  const widths = requiereFirmaDocente
+    ? { sigla: 15, materia: 55, grupo: 10, firma: 20 }
+    : { sigla: 15, materia: 75, grupo: 10 }
 
-  const headerRow = new TableRow({
-    tableHeader: true,
-    children: headerCells.map((h) => tableCellText(h, { bold: true })),
-  })
+  const headerCells = [
+    tableCellText('SIGLA', { bold: true }, widths.sigla),
+    tableCellText('MATERIA', { bold: true }, widths.materia),
+    tableCellText('GRUPO', { bold: true }, widths.grupo),
+  ]
+  if (requiereFirmaDocente) headerCells.push(tableCellText('FIRMA DOCENTE', { bold: true }, widths.firma))
+
+  const headerRow = new TableRow({ tableHeader: true, children: headerCells })
 
   const rows = especiales.map((m) => {
     const cells = [
-      tableCellText(m.code),
-      tableCellText(m.name),
-      tableCellText(materiaGrupos[m.code] || ''),
+      tableCellText(m.code, {}, widths.sigla),
+      tableCellText(m.name, {}, widths.materia),
+      tableCellText(materiaGrupos[m.code] || '', {}, widths.grupo),
     ]
-    if (requiereFirmaDocente) cells.push(tableCellText(''))
+    if (requiereFirmaDocente) cells.push(tableCellText('', {}, widths.firma))
     return new TableRow({ children: cells })
   })
 
@@ -183,8 +191,9 @@ function buildCartaNormalSection(logoBuffer, { datosPersonales, especiales, mate
     new Paragraph({ text: '', spacing: DOUBLE_SPACING }),
     buildMateriasTable(especiales, materiaGrupos, requiereFirmaDocente),
     new Paragraph({ text: '', spacing: DOUBLE_SPACING }),
-    paragraph([run('•  Adjunto boleta de inscripción, y,')]),
-    paragraph([run('•  Boleta de pago de adicción (caja) 10 Bs.')]),
+    buildBodyParagraph([run('Para respaldar la presente solicitud, adjunto la siguiente documentación:')]),
+    paragraph([run('•  Boleta de inscripción.')]),
+    paragraph([run('•  Boleta de pago por concepto de adición de materias (Bs. 10).')]),
     buildBodyParagraph([
       run(
         'Sin otro particular y a la espera que esta información le sea de beneficio, me despido y le extiendo un ' +
@@ -226,21 +235,25 @@ function buildCartaOchoSection(logoBuffer, { datosPersonales, nombreCompleto, fe
     ]),
     buildBodyParagraph([
       run(
-        'La presente solicitud obedece a mi interés de avanzar en mi formación académica y optimizar mi ' +
-          'rendimiento durante el presente periodo, comprometiéndome a asumir con responsabilidad la carga ' +
-          'académica y cumplir con todas las obligaciones que demandan las asignaturas.'
+        'La presente solicitud tiene como finalidad avanzar en mi formación académica y optimizar mi rendimiento ' +
+          'durante el presente periodo, asumiendo el compromiso de cumplir responsablemente con la carga ' +
+          'académica y con todas las obligaciones que demandan las asignaturas.'
       ),
     ]),
     buildBodyParagraph([
       run(
-        'Por lo expuesto, solicito muy respetuosamente que mi petición sea considerada y, de ser posible, se ' +
-          'autorice la inscripción de las ocho materias para el presente semestre.'
+        'Por lo expuesto, solicito muy respetuosamente que mi petición sea considerada y, de ser procedente, se ' +
+          'autorice cursar las ocho (8) materias durante el presente semestre.'
       ),
     ]),
+    buildBodyParagraph([run('Adjunto a la presente la siguiente documentación de respaldo:')]),
+    paragraph([run('•  Boleta de inscripción.')]),
+    paragraph([run('•  Avance académico.')]),
+    paragraph([run('•  Histórico académico.')]),
     buildBodyParagraph([
       run(
-        'Sin otro particular, agradezco de antemano la atención brindada a la presente y quedo a la espera de una ' +
-          'respuesta favorable.'
+        'Sin otro particular y esperando una respuesta favorable a mi solicitud, me despido de su autoridad ' +
+          'reiterándole las seguridades de mi más alta consideración y respeto.'
       ),
     ]),
     paragraph([run('Atentamente,')]),
@@ -273,12 +286,6 @@ function buildCartaOchoSection(logoBuffer, { datosPersonales, nombreCompleto, fe
         }),
         new TextRun({
           text: datosPersonales.celular || '_________________________',
-          font: 'Times New Roman',
-          size: 24,
-        }),
-        new TextRun({
-          text: 'Adjunto boleta de inscripción, avance académico e histórico:',
-          break: 1,
           font: 'Times New Roman',
           size: 24,
         }),
