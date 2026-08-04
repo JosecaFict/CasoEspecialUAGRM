@@ -20,7 +20,8 @@ export default function StepDatosPersonales({ onNext }) {
     const e = {}
     if (!datosPersonales.nombres.trim()) e.nombres = 'Requerido'
     if (!datosPersonales.apellidos.trim()) e.apellidos = 'Requerido'
-    if (datosPersonales.ppa && !ppaInRange(datosPersonales.ppa)) e.ppa = 'Debe estar entre 0 y 100'
+    if (!datosPersonales.ppa) e.ppa = 'Requerido'
+    else if (!ppaInRange(datosPersonales.ppa)) e.ppa = 'Debe estar entre 0 y 100'
     if (!digitsInRange(datosPersonales.registro, 6, 9)) e.registro = 'Debe tener entre 6 y 9 dígitos'
     if (!digitsInRange(datosPersonales.carnet, 6, 9)) e.carnet = 'Debe tener entre 6 y 9 dígitos'
     if (!datosPersonales.procedencia) e.procedencia = 'Requerido'
@@ -137,7 +138,7 @@ export default function StepDatosPersonales({ onNext }) {
             />
           </Field>
 
-          <Field label="PPA (opcional)" error={touched.ppa && errors.ppa} hint="Valor de 0 a 100, hasta 2 decimales">
+          <Field label="PPA" error={touched.ppa && errors.ppa} hint="Valor de 0 a 100, hasta 2 decimales">
             <input
               type="text"
               inputMode="decimal"
@@ -152,13 +153,8 @@ export default function StepDatosPersonales({ onNext }) {
             <input type="text" value={datosPersonales.carrera} readOnly disabled />
           </Field>
 
-          <Field label="Director/a de carrera" hint="Referencia editable — cambia cada gestión (2 años)">
-            <input
-              type="text"
-              value={datosPersonales.director}
-              onChange={(e) => setDatosPersonales({ director: e.target.value })}
-              placeholder={DIRECTORA}
-            />
+          <Field label="Director/a de carrera">
+            <input type="text" value={datosPersonales.director || DIRECTORA} readOnly disabled />
           </Field>
 
         </div>
