@@ -1,8 +1,10 @@
-import { useEffect } from 'react'
+import { lazy, Suspense, useEffect } from 'react'
 import { useApp } from './context/AppContext'
 import StepDatosPersonales from './components/StepDatosPersonales'
 import StepMalla from './components/StepMalla'
 import StepCarta from './components/StepCarta'
+
+const AdminPage = lazy(() => import('./pages/AdminPage'))
 
 const STEPS = [
   { id: 1, label: 'Datos Personales' },
@@ -16,6 +18,14 @@ export default function App() {
   useEffect(() => {
     window.scrollTo(0, 0)
   }, [step])
+
+  if (window.location.pathname.startsWith('/admin')) {
+    return (
+      <Suspense fallback={<div className="app-shell">Cargando...</div>}>
+        <AdminPage />
+      </Suspense>
+    )
+  }
 
   return (
     <div className="app-shell">
