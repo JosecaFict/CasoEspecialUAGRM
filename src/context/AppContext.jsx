@@ -42,14 +42,17 @@ export function AppProvider({ children }) {
   const [materiaEstados, setMateriaEstados] = useState(saved?.materiaEstados ?? {})
   // materiaGrupos: { [code]: string } — grupo declarado por el estudiante para la carta
   const [materiaGrupos, setMateriaGrupos] = useState(saved?.materiaGrupos ?? {})
+  // enviado: si esta solicitud (con los datos actuales) ya se guardó en Supabase
+  const [enviado, setEnviado] = useState(saved?.enviado ?? false)
 
   useEffect(() => {
-    const payload = JSON.stringify({ step, datosPersonales, materiaEstados, materiaGrupos })
+    const payload = JSON.stringify({ step, datosPersonales, materiaEstados, materiaGrupos, enviado })
     localStorage.setItem(STORAGE_KEY, payload)
-  }, [step, datosPersonales, materiaEstados, materiaGrupos])
+  }, [step, datosPersonales, materiaEstados, materiaGrupos, enviado])
 
   function setDatosPersonales(partial) {
     setDatosPersonalesState((prev) => ({ ...prev, ...partial }))
+    setEnviado(false)
   }
 
   function setMateriaEstado(code, estado) {
@@ -62,16 +65,23 @@ export function AppProvider({ children }) {
       }
       return next
     })
+    setEnviado(false)
   }
 
   function setMateriaGrupo(code, grupo) {
     setMateriaGrupos((prev) => ({ ...prev, [code]: grupo }))
+    setEnviado(false)
+  }
+
+  function marcarEnviado() {
+    setEnviado(true)
   }
 
   function resetAll() {
     setDatosPersonalesState(defaultDatosPersonales)
     setMateriaEstados({})
     setMateriaGrupos({})
+    setEnviado(false)
     setStep(1)
     localStorage.removeItem(STORAGE_KEY)
   }
@@ -79,6 +89,7 @@ export function AppProvider({ children }) {
   function resetMalla() {
     setMateriaEstados({})
     setMateriaGrupos({})
+    setEnviado(false)
   }
 
   const value = {
@@ -90,6 +101,8 @@ export function AppProvider({ children }) {
     setMateriaEstado,
     materiaGrupos,
     setMateriaGrupo,
+    enviado,
+    marcarEnviado,
     resetAll,
     resetMalla,
   }

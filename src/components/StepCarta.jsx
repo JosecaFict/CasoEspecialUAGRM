@@ -2,12 +2,14 @@ import { useMemo, useRef, useState } from 'react'
 import { useApp } from '../context/AppContext'
 import { MATERIA_INDEX, DIRECTORA, FACULTAD, CARRERA } from '../data/malla'
 import { formatFechaLarga } from '../utils/date'
+import { supabase } from '../lib/supabaseClient'
 import MallaSheets from './MallaSheets'
 
 const GRUPOS = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'AB', 'CD', 'X', 'Z']
 
 export default function StepCarta({ onBack }) {
-  const { datosPersonales, materiaEstados, materiaGrupos, setMateriaGrupo, setStep } = useApp()
+  const { datosPersonales, materiaEstados, materiaGrupos, setMateriaGrupo, setStep, enviado, marcarEnviado } =
+    useApp()
   const [descargandoWord, setDescargandoWord] = useState(false)
   const mallaRef = useRef(null)
 
@@ -29,11 +31,45 @@ export default function StepCarta({ onBack }) {
   const fecha = formatFechaLarga()
   const necesitaCartaOcho = totalCargaCount > 7
 
+  async function enviarSolicitud() {
+    if (enviado) return
+    try {
+      const solicitudId = crypto.randomUUID()
+      const { error } = await supabase.from('solicitudes').insert({
+        id: solicitudId,
+        nombre: datosPersonales.nombres,
+        apellidos: datosPersonales.apellidos,
+        carnet: datosPersonales.carnet,
+        celular: datosPersonales.celular,
+        registro: datosPersonales.registro,
+        ppa: Number(datosPersonales.ppa),
+        semestre: Number(datosPersonales.semestre),
+        anio: Number(datosPersonales.anio),
+        etapa: Number(datosPersonales.etapa),
+      })
+      if (error) throw error
+
+      const materiasPayload = especiales.map((m) => ({
+        solicitud_id: solicitudId,
+        sigla: m.code,
+        grupo: materiaGrupos[m.code] || '',
+      }))
+      const { error: materiasError } = await supabase.from('solicitud_materias').insert(materiasPayload)
+      if (materiasError) throw materiasError
+
+      marcarEnviado()
+    } catch (err) {
+      console.error('No se pudo guardar la solicitud en Supabase:', err)
+    }
+  }
+
   function handlePrint() {
+    enviarSolicitud()
     window.print()
   }
 
   async function handleDownloadWord() {
+    await enviarSolicitud()
     setDescargandoWord(true)
     try {
       const [{ downloadCartasWord }, { default: html2canvas }] = await Promise.all([
